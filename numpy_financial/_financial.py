@@ -700,6 +700,22 @@ def _roots(p):
     return eigenvalues / p[0]
 
 
+def _first_positive_root(function, low=0., high=1., tolerance=1e-8):
+    # If both edges have the same sign, raise an exception
+    if function(low) < tolerance:
+        return low
+    if function(low)*function(high) > 0:
+        raise
+    middle = (low + high)/2
+    if function(middle) < tolerance:
+        return middle
+    else:
+        if function(low)*function(middle) > 0:
+            return _first_positive_root(function, middle, high, tolerance)
+        else:
+            return _first_positive_root(function, low, middle, tolerance)
+
+
 def irr(values):
     """
     Return the Internal Rate of Return (IRR).
@@ -772,16 +788,19 @@ def irr(values):
     non_zero = np.nonzero(np.ravel(values))[0]
     values = values[int(non_zero[0]):int(non_zero[-1])+1]
 
-    res = _roots(values[::-1])
+    polynomial = np.poly1d(values)
+    res = _first_positive_root(polynomial)
 
-    mask = (res.imag == 0) & (res.real > 0)
-    if not mask.any():
-        return np.nan
-    res = res[mask].real
+    rate = 1/res - 1
+    # res = _roots(values[::-1])
+
+    # mask = (res.imag == 0) & (res.real > 0)
+    # if not mask.any():
+    #     return np.nan
+    # res = res[mask].real
     # NPV(rate) = 0 can have more than one solution so we return
     # only the solution closest to zero.
-    rate = 1/res - 1
-    rate = rate.item(np.argmin(np.abs(rate)))
+    # rate = rate.item(np.argmin(np.abs(rate)))
     return rate
 
 
