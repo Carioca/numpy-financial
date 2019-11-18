@@ -783,8 +783,7 @@ def irr(values):
 
     # Strip leading and trailing zeros. Since we only care about
     # positive roots we can neglect roots at zero.
-    non_zero = np.nonzero(np.ravel(values))[0]
-    values = values[int(non_zero[0]):int(non_zero[-1])+1]
+    values = np.trim_zeros(values)
 
     polynomial = np.poly1d(values[::-1])
     res = _first_positive_root(polynomial)
