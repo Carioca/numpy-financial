@@ -703,7 +703,7 @@ def _roots(p):
 def _first_positive_root(function, low=0., high=2., tolerance=1e-15):
     # If both edges have the same sign, raise an exception
     if function(low)*function(high) > 0:
-        raise
+        return np.nan
     middle = (low + high)/2
     if high-low < tolerance:
         return middle
