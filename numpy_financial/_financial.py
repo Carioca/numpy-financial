@@ -700,16 +700,12 @@ def _roots(p):
     return eigenvalues / p[0]
 
 
-def _first_positive_root(function, low=0., high=1., tolerance=1e-10):
-
-    if np.absolute(function(low)) < tolerance:
-        return low
-
+def _first_positive_root(function, low=0., high=2., tolerance=1e-15):
     # If both edges have the same sign, raise an exception
     if function(low)*function(high) > 0:
         raise
     middle = (low + high)/2
-    if np.absolute(function(middle)) < tolerance:
+    if high-low < tolerance:
         return middle
     else:
         if function(low)*function(middle) > 0:
